@@ -1,1 +1,5 @@
 BitCoinBot
+bin
+build
+build.exe
+*.zip
