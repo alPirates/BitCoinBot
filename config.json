@@ -1,0 +1,11 @@
+{
+    "proxy": "http://54.39.97.250:3128",
+    "max_temperature": 75,
+    "email": "",
+    "password": "",
+    "token": "",
+    "chat_id": 0,
+    "update_time": 1,
+    "html_url_1": "http://localhost:8081/file1",
+    "html_url_2": "http://localhost:8081/file2"
+}
