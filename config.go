@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"io/ioutil"
+	"log"
 	"os"
 )
 
@@ -19,11 +20,27 @@ type Config struct {
 	ChatID      int64  `json:"chat_id"`
 }
 
+func createConfigFile() ([]byte, error) {
+	log.Println("Reading config from default")
+	data, err := Asset("data/config.json")
+	if err != nil {
+		return nil, err
+	}
+	err = ioutil.WriteFile("config.json", data, 0644)
+	if err != nil {
+		return nil, err
+	}
+	return data, nil
+}
+
 func getConfig() Config {
 	file, err := ioutil.ReadFile("config.json")
 	if err != nil {
-		sendError("can't read config : " + err.Error())
-		os.Exit(0)
+		file, err = createConfigFile()
+		if err != nil {
+			sendError("can't read config : " + err.Error())
+			os.Exit(0)
+		}
 	}
 
 	config := &Config{}
