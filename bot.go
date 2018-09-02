@@ -9,10 +9,11 @@ import (
 	"net/url"
 	"os"
 
+	"github.com/alPirates/BitCoinBot/config"
 	tgbot "gopkg.in/telegram-bot-api.v4"
 )
 
-func startBot(config Config) *tgbot.BotAPI {
+func startBot(config config.Config) *tgbot.BotAPI {
 
 	var err error
 	proxyURL, _ := url.Parse(config.Proxy)
@@ -28,7 +29,7 @@ func startBot(config Config) *tgbot.BotAPI {
 	return bot
 }
 
-func startBotWork(bot *tgbot.BotAPI, config Config) {
+func startBotWork(bot *tgbot.BotAPI, config config.Config) {
 	channel := tgbot.NewUpdate(0)
 	channel.Timeout = 30
 	updates, _ := bot.GetUpdatesChan(channel)
@@ -62,7 +63,7 @@ func startBotWork(bot *tgbot.BotAPI, config Config) {
 
 }
 
-func sendMessages(bot *tgbot.BotAPI, config Config, messages []string) {
+func sendMessages(bot *tgbot.BotAPI, config config.Config, messages []string) {
 	mes := ""
 	for i, str := range messages {
 		mes += str
@@ -76,7 +77,7 @@ func sendMessages(bot *tgbot.BotAPI, config Config, messages []string) {
 	}
 }
 
-func sendMessagesByMail(config Config, message string) {
+func sendMessagesByMail(config config.Config, message string) {
 	email := config.Email
 	password := config.Password
 
@@ -94,7 +95,7 @@ func sendMessagesByMail(config Config, message string) {
 	}
 }
 
-func sendMessagesByTelegram(bot *tgbot.BotAPI, config Config, message string) error {
+func sendMessagesByTelegram(bot *tgbot.BotAPI, config config.Config, message string) error {
 	if config.ChatID == 0 {
 		return errors.New("no chat id")
 	}

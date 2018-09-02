@@ -1,15 +1,20 @@
-package main
+package config
 
 import (
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"log"
 	"os"
+	"time"
+
+	"github.com/alPirates/BitCoinBot/assets"
 )
 
 // Config structure
 type Config struct {
 	Proxy       string `json:"proxy"`
+	Port        string `json:"port"`
 	Temperature int    `json:"max_temperature"`
 	Email       string `json:"email"`
 	Password    string `json:"password"`
@@ -22,7 +27,7 @@ type Config struct {
 
 func createConfigFile() ([]byte, error) {
 	log.Println("Reading config from default")
-	data, err := Asset("data/config.json")
+	data, err := assets.Asset("data/config.json")
 	if err != nil {
 		return nil, err
 	}
@@ -33,7 +38,7 @@ func createConfigFile() ([]byte, error) {
 	return data, nil
 }
 
-func getConfig() Config {
+func GetConfig() Config {
 	file, err := ioutil.ReadFile("config.json")
 	if err != nil {
 		file, err = createConfigFile()
@@ -53,4 +58,8 @@ func getConfig() Config {
 	sendError("read config")
 
 	return *config
+}
+
+func sendError(err string) {
+	fmt.Println(time.Now().Format(time.UnixDate) + " : " + err)
 }

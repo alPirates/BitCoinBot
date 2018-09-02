@@ -6,10 +6,11 @@ import (
 	"time"
 
 	"github.com/PuerkitoBio/goquery"
+	"github.com/alPirates/BitCoinBot/config"
 	tgbot "gopkg.in/telegram-bot-api.v4"
 )
 
-func parse(bot *tgbot.BotAPI, config Config) {
+func parse(bot *tgbot.BotAPI, config config.Config) {
 	for true {
 		messages := []string{}
 		startTime := time.Now()

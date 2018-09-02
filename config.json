@@ -1,0 +1,12 @@
+{
+    "proxy": "http://59.160.104.253:8080",
+    "port": "1234",
+    "max_temperature": 75,
+    "email": "email",
+    "password": "password",
+    "token": "653893478:AAHqBFHwI7l4fYhpJOOJ_QVpl1EZMngpSzA",
+    "chat_id": 216399855,
+    "update_time": 1,
+    "html_url_1": "http://localhost:8081/file1",
+    "html_url_2": "http://localhost:8081/file2"
+}
