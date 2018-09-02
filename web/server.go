@@ -42,6 +42,7 @@ func StartServer(port string) {
 	}
 
 	server.GET("/", mainHandler)
+	server.POST("/update", updateHandler)
 	server.CUSTOM("/static", "STATIC", staticHandler)
 
 	server.ListenAndServe()

@@ -17,35 +17,35 @@
           <form action="/update" method="POST">
             <div class="form-group">
               <label>Email</label>
-              <input type="email" class="form-control" placeholder="{{ .Email }}">
+              <input type="email" class="form-control" name="email" value="{{ .Email }}">
             </div>
             <div class="form-group">
               <label>Пароль</label>
-              <input type="text" class="form-control" placeholder="{{ .Password }}">
+              <input type="text" class="form-control" name="password" value="{{ .Password }}">
             </div>
             <div class="form-group">
               <label>Время апдейта в минутах</label>
-              <input type="number" class="form-control" placeholder="{{ .UpdateTime }}">
+              <input type="number" class="form-control" name="update_time" value="{{ .UpdateTime }}">
             </div>
             <div class="form-group">
               <label>Порт</label>
-              <input type="text" class="form-control" placeholder="{{ .Port }}">
+              <input type="text" class="form-control" name="port" value="{{ .Port }}">
             </div>
             <div class="form-group">
               <label>Прокси</label>
-              <input type="text" class="form-control" placeholder="{{ .Proxy }}">
+              <input type="text" class="form-control" name="proxy" value="{{ .Proxy }}">
             </div>
             <div class="form-group">
               <label>Максимальная температура</label>
-              <input type="number" class="form-control" placeholder="{{ .Temperature }}">
+              <input type="number" class="form-control" name="max_temperature" value="{{ .Temperature }}">
             </div>
             <div class="form-group">
               <label>Ссылка 1</label>
-              <input type="text" class="form-control" placeholder="{{ .HTMLURL1 }}">
+              <input type="text" class="form-control" name="html_url_1" value="{{ .HTMLURL1 }}">
             </div>
             <div class="form-group">
               <label>Ссылка 2</label>
-              <input type="text" class="form-control" placeholder="{{ .HTMLURL2 }}">
+              <input type="text" class="form-control" name="html_url_2" value="{{ .HTMLURL2 }}">
             </div>
             <div class="form-group">
               <input type="submit" value="Обновить" class="btn btn-success">
