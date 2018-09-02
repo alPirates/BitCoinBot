@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Панель управления</title>
+  <link rel="stylesheet" href="static/bootstrap.css">
+</head>
+<body>
+  <div class="container">
+    <div class="col-xs-1"></div>  
+    <div class="col-xs-10 mt-3">
+      <div class="col-xs-12">
+        <div class="jumbotron">
+          <div class="col-xs-2 mx-auto">
+            <h3 class="mx-auto">Конфигурация</h3>
+          </div>
+          <form action="/update" method="POST">
+            <div class="form-group">
+              <label>Email</label>
+              <input type="email" class="form-control">
+            </div>
+            <div class="form-group">
+              <label>Пароль</label>
+              <input type="text" class="form-control">
+            </div>
+            <div class="form-group">
+              <label>Время апдейта в минутах</label>
+              <input type="number" class="form-control">
+            </div>
+            <div class="form-group">
+              <label>Порт</label>
+              <input type="text" class="form-control">
+            </div>
+            <div class="form-group">
+              <label>Прокси</label>
+              <input type="text" class="form-control">
+            </div>
+            <div class="form-group">
+              <label>Максимальная температура</label>
+              <input type="number" class="form-control">
+            </div>
+            <div class="form-group">
+              <label>Ссылка 1</label>
+              <input type="text" class="form-control">
+            </div>
+            <div class="form-group">
+              <label>Ссылка 2</label>
+              <input type="text" class="form-control">
+            </div>
+            <div class="form-group">
+              <input type="submit" value="Обновить" class="btn btn-success">
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+    <div class="col-xs-1"></div>  
+  </div>
+</body>
+</html>
