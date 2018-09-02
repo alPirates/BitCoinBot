@@ -18,23 +18,23 @@ func mainHandler(c *magic.Context) error {
 
 func updateHandler(c *magic.Context) error {
 
-	fmt.Println(c.RawJSON)
+	email, _ := c.PostParams.ParseString("email")
+	password, _ := c.PostParams.ParseString("password")
+	HTMLURL1, _ := c.PostParams.ParseString("html_url_1")
+	HTMLURL2, _ := c.PostParams.ParseString("html_url_2")
+	updateTime, _ := c.PostParams.ParseInt("update_time")
+	port, _ := c.PostParams.ParseString("port")
+	proxy, _ := c.PostParams.ParseString("proxy")
+	temperature, _ := c.PostParams.ParseInt("max_temperature")
 
-	err = c.Request.ParseForm()
-	fmt.Println(err)
-	fmt.Println(c.Request.FormValue("email"))
-	fmt.Println(c.Request.Form)
-
-	email := c.Request.FormValue("email")
-	password := c.Request.Form.Get("password")
-	HTMLURL1 := c.Request.Form.Get("html_url_1")
-	HTMLURL2 := c.Request.Form.Get("html_url_2")
-	updateTime := c.Request.Form.Get("update_time")
-	port := c.Request.Form.Get("port")
-	proxy := c.Request.Form.Get("proxy")
-	temperature := c.Request.Form.Get("max_temperature")
-
-	fmt.Println(email, password, HTMLURL1, HTMLURL2, updateTime, port, proxy, temperature)
+	fmt.Println(email)
+	fmt.Println(password)
+	fmt.Println(HTMLURL1)
+	fmt.Println(HTMLURL2)
+	fmt.Println(updateTime)
+	fmt.Println(port)
+	fmt.Println(proxy)
+	fmt.Println(temperature)
 
 	http.Redirect(c.Writer, c.Request, "/", 301)
 	return nil
