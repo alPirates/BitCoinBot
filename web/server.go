@@ -1,11 +1,13 @@
 package web
 
 import (
+	"fmt"
 	"html/template"
+	"net/http"
 
 	"github.com/alPirates/BitCoinBot/assets"
 	"github.com/alPirates/BitCoinBot/config"
-	magic "github.com/alPirates/Magic"
+	"github.com/go-chi/chi"
 )
 
 var (
@@ -35,16 +37,21 @@ func install() error {
 func StartServer(port string) {
 	serverConf = config.GetConfig()
 
-	server := magic.NewMagic(port)
+	router := chi.NewRouter()
 	err := install()
 	if err != nil {
 		panic(err)
 	}
 
-	server.GET("/", mainHandler)
-	server.POST("/update", updateHandler)
-	server.CUSTOM("/static", "STATIC", staticHandler)
+	router.Get("/", mainHandler)
+	router.Post("/update", updateHandler)
+	router.Route("/static", func(r chi.Router) {
+		r.Get("/{filename}", staticHandler)
+	})
 
-	server.ListenAndServe()
+	http.ListenAndServe(
+		fmt.Sprintf(":%s", serverConf.Port),
+		router,
+	)
 
 }
