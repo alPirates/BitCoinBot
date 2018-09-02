@@ -18,10 +18,10 @@ func mainHandler(c *magic.Context) error {
 func staticHandler(c *magic.Context) error {
 	filename := c.Storage["fileName"].(string)
 	file, err := assets.Asset(fmt.Sprintf("data/web/static/%s", filename))
-	fmt.Println("filename is ", filename)
 	if err != nil {
 		return c.SendError(err)
 	}
-	fmt.Println("returning", file)
+	str, _ := c.Headers.ParseString("Accept")
+	c.Writer.Header().Set("Content-Type", str)
 	return c.SendString(string(file))
 }
