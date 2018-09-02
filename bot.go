@@ -3,7 +3,9 @@ package main
 import (
 	"errors"
 	"fmt"
+	"log"
 	"net/http"
+	"net/smtp"
 	"net/url"
 	"os"
 
@@ -75,7 +77,21 @@ func sendMessages(bot *tgbot.BotAPI, config Config, messages []string) {
 }
 
 func sendMessagesByMail(config Config, message string) {
+	email := config.Email
+	password := config.Password
 
+	auth := smtp.PlainAuth("", email, password, "smtp.yandex.ru")
+	to := []string{email}
+	msg := []byte(
+		"Subject: Предупреждение\r\n" +
+			"\r\n" +
+			message +
+			"\r\n",
+	)
+	err := smtp.SendMail("smtp.yandex.ru:25", auth, email, to, msg)
+	if err != nil {
+		log.Fatal(err)
+	}
 }
 
 func sendMessagesByTelegram(bot *tgbot.BotAPI, config Config, message string) error {
