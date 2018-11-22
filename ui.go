@@ -1,9 +1,6 @@
 package main
 
 import (
-	"reflect"
-	"strconv"
-
 	ui "github.com/gizak/termui"
 	"github.com/gizak/termui/extra"
 )
@@ -88,17 +85,14 @@ func NewUiService() UiService {
 	configCommands.Width = 25
 	configCommands.Y = 0
 
-	config := ui.NewList()
-	configList := []string{
-		"[email] [test@mail.ru](fg-green)",
-		"[password] [test](fg-yellow)",
-	}
-	config.Items = configList
-	config.ItemFgColor = ui.ColorCyan
-	config.BorderLabel = "Конфигурация"
-	config.Height = 10
-	config.Width = 25
-	config.Y = 0
+	configList := ui.NewList()
+	configListList := config.toStringMas()
+	configList.Items = configListList
+	configList.ItemFgColor = ui.ColorCyan
+	configList.BorderLabel = "Конфигурация"
+	configList.Height = 10
+	configList.Width = 25
+	configList.Y = 0
 
 	configStatus := ui.NewPar("[Конфигурация прочитана успешно](fg-green)")
 	configStatus.Height = 3
@@ -113,7 +107,7 @@ func NewUiService() UiService {
 		Status:         bc,
 		Logs:           lg,
 		ConfigCommands: configCommands,
-		Config:         config,
+		Config:         configList,
 		ConfigStatus:   configStatus,
 		logs: []string{
 			"[TMP] [FIRE! FIRE!](fg-red)",
@@ -149,6 +143,8 @@ func (u UiService) Init() {
 			ui.NewCol(12, 0, u.ConfigStatus),
 		),
 	}
+
+	u.RefreshConfig()
 
 	u.Layout1 = layout1
 	u.Layout2 = layout2
@@ -188,23 +184,7 @@ func (u UiService) CheckKeys() {
 	})
 	ui.Handle("r", func(ui.Event) {
 		if field == 2 {
-			config.getConfig(&u)
-			mas := make([]string, 0)
-			v := reflect.ValueOf(*config)
-			n := v.Type().NumField()
-			for i := 0; i < n; i++ {
-				g := v.Type().Field(i)
-				switch v.Field(i).Kind() {
-				case reflect.String:
-					mas = append(mas, "["+g.Name+"] ["+v.Field(i).String()+"](fg-yellow)")
-					break
-				case reflect.Int:
-					mas = append(mas, "["+g.Name+"] ["+strconv.Itoa((int)(v.Field(i).Int()))+"](fg-yellow)")
-					break
-				}
-			}
-			u.Config.Items = mas
-			ui.Render(u.Config)
+			u.RefreshConfig()
 		}
 	})
 	ui.Handle("t", func(ui.Event) {
@@ -233,4 +213,10 @@ func (u UiService) LogError(message string) {
 	if field == 1 {
 		ui.Render(u.Logs)
 	}
+}
+
+func (u UiService) RefreshConfig() {
+	config.getConfig(&u)
+	u.Config.Items = config.toStringMas()
+	ui.Render(u.Config)
 }
