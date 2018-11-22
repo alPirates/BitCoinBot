@@ -2,7 +2,6 @@ package main
 
 import (
 	"errors"
-	"log"
 	"net/smtp"
 	"regexp"
 )
@@ -34,13 +33,13 @@ func getSmtpName(name string) (map[string]string, error) {
 	return nil, errors.New("Cant find email addres regexp in string")
 }
 
-func sendMessageByEmail(message string) {
+func sendMessageByEmail(ui *UiService, message string) {
 	email := config.Email
 	password := config.Password
 	serverSMTP, err := getSmtpName(email)
 
 	if err != nil {
-		log.Println(err)
+		ui.LogError("[SMTP] [use ...@yandex.ru](fg-red)")
 		return
 	}
 
@@ -54,7 +53,7 @@ func sendMessageByEmail(message string) {
 	)
 	err = smtp.SendMail(serverSMTP["port"], auth, email, to, msg)
 	if err != nil {
-		log.Fatal(err)
+		ui.LogError("[SMTP] [incorrect email and password](fg-red)")
 	}
 
 }
