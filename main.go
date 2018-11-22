@@ -1,12 +1,13 @@
 package main
 
 var (
-    config *Config
+	config *Config
 )
 
 func main() {
-	config = getConfig()
-    ui := NewUiService()
-    go loopParse(&ui, config)
-    ui.Init()
+	config = &Config{}
+	ui := NewUiService()
+	config.getConfig(&ui)
+	go loopParse(&ui, config)
+	ui.Init()
 }

@@ -1,14 +1,15 @@
 package main
 
 import (
-    "reflect"
+	"reflect"
+	"strconv"
+
 	ui "github.com/gizak/termui"
 	"github.com/gizak/termui/extra"
-    "strconv"
 )
 
 var (
-    field int
+	field int
 )
 
 type UiService struct {
@@ -18,7 +19,7 @@ type UiService struct {
 	Commands *ui.List
 	Logs     *ui.List
 	Status   *ui.BarChart
-    logs []string
+	logs     []string
 	// config layout
 	Layout2        []*ui.Row
 	ConfigCommands *ui.List
@@ -104,7 +105,7 @@ func NewUiService() UiService {
 	configStatus.Width = 37
 	configStatus.Y = 4
 	configStatus.BorderFg = ui.ColorGreen
-    field = 1
+	field = 1
 
 	return UiService{
 		Tabpane:        tabpane,
@@ -114,9 +115,9 @@ func NewUiService() UiService {
 		ConfigCommands: configCommands,
 		Config:         config,
 		ConfigStatus:   configStatus,
-        logs: []string{
-            "[TMP] [FIRE! FIRE!](fg-red)",
-        },
+		logs: []string{
+			"[TMP] [FIRE! FIRE!](fg-red)",
+		},
 	}
 }
 
@@ -177,59 +178,59 @@ func (u UiService) SetConfigLayout() {
 
 func (u UiService) CheckKeys() {
 	ui.Handle("q", func(ui.Event) {
-	        ui.StopLoop()
+		ui.StopLoop()
 	})
 	ui.Handle("u", func(ui.Event) {
 		// обновление состояния
-        if field == 1 {
-            parse(&u, config)
-        }
+		if field == 1 {
+			parse(&u, config)
+		}
 	})
 	ui.Handle("r", func(ui.Event) {
-        if field == 2 {
-            config = getConfig()
-            mas := make([]string, 0)
-            v := reflect.ValueOf(*config)
-            n := v.Type().NumField()
-            for i := 0; i < n; i++ {
-                g := v.Type().Field(i)
-                switch v.Field(i).Kind() {
-                case reflect.String:
-                    mas = append(mas, "[" + g.Name + "] [" + v.Field(i).String() + "](fg-yellow)")
-                    break
-                case reflect.Int:
-                    mas = append(mas, "[" + g.Name + "] [" + strconv.Itoa((int)(v.Field(i).Int()))+"](fg-yellow)")
-                    break
-                }
-            }
-            u.Config.Items = mas
-            ui.Render(u.Config)
-        }
+		if field == 2 {
+			config.getConfig(&u)
+			mas := make([]string, 0)
+			v := reflect.ValueOf(*config)
+			n := v.Type().NumField()
+			for i := 0; i < n; i++ {
+				g := v.Type().Field(i)
+				switch v.Field(i).Kind() {
+				case reflect.String:
+					mas = append(mas, "["+g.Name+"] ["+v.Field(i).String()+"](fg-yellow)")
+					break
+				case reflect.Int:
+					mas = append(mas, "["+g.Name+"] ["+strconv.Itoa((int)(v.Field(i).Int()))+"](fg-yellow)")
+					break
+				}
+			}
+			u.Config.Items = mas
+			ui.Render(u.Config)
+		}
 	})
 	ui.Handle("t", func(ui.Event) {
 		// тестовое  письмо
-        if field == 1 {
-            u.LogError("[Email] [шлю тестовый email](fg-red)")
-        }
+		if field == 1 {
+			u.LogError("[Email] [шлю тестовый email](fg-red)")
+		}
 	})
 
 	// switch layout
 	ui.Handle("1", func(ui.Event) {
 		u.SetMainLayout()
-        field = 1
+		field = 1
 	})
 	ui.Handle("2", func(ui.Event) {
 		u.SetConfigLayout()
-        field = 2
+		field = 2
 	})
 }
 
 func (u UiService) LogError(message string) {
-    if len(u.Logs.Items) == 13 {
-        u.Logs.Items = u.Logs.Items[1:]
-    }
-    u.Logs.Items = append(u.Logs.Items, message)
-    if field == 1 {
-        ui.Render(u.Logs)
-    }
+	if len(u.Logs.Items) == 13 {
+		u.Logs.Items = u.Logs.Items[1:]
+	}
+	u.Logs.Items = append(u.Logs.Items, message)
+	if field == 1 {
+		ui.Render(u.Logs)
+	}
 }
