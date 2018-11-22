@@ -18,6 +18,7 @@ func loopParse(u *UiService, config *Config) {
 
 func parse(u *UiService, config *Config) {
 	messages := []string{}
+	temps := make([]int, 0)
 
 	doc, err := goquery.NewDocument(config.HTMLURL1)
 	if err == nil {
@@ -53,6 +54,7 @@ func parse(u *UiService, config *Config) {
 				text := s2.Text()
 				if text != "" {
 					temperatura, errT := strconv.Atoi(text)
+					temps = append(temps, temperatura)
 					if errT != nil {
 						u.LogError("[ERR] [температура не является числом : " + err.Error() + "](fg-red)")
 					} else if temperatura > config.Temperature {
@@ -98,6 +100,8 @@ func parse(u *UiService, config *Config) {
 	} else {
 		u.LogError("[ERR] [can't open your website : " + err.Error() + "](fg-red)")
 	}
+
+	u.SetCharts(temps)
 
 	if len(messages) != 0 {
 		for _, message := range messages {
