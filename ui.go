@@ -1,10 +1,8 @@
 package main
 
 import (
-    "reflect"
 	ui "github.com/gizak/termui"
 	"github.com/gizak/termui/extra"
-    "strconv"
 )
 
 var (
@@ -188,21 +186,7 @@ func (u UiService) CheckKeys() {
 	ui.Handle("r", func(ui.Event) {
         if field == 2 {
             config = getConfig()
-            mas := make([]string, 0)
-            v := reflect.ValueOf(*config)
-            n := v.Type().NumField()
-            for i := 0; i < n; i++ {
-                g := v.Type().Field(i)
-                switch v.Field(i).Kind() {
-                case reflect.String:
-                    mas = append(mas, "[" + g.Name + "] [" + v.Field(i).String() + "](fg-yellow)")
-                    break
-                case reflect.Int:
-                    mas = append(mas, "[" + g.Name + "] [" + strconv.Itoa((int)(v.Field(i).Int()))+"](fg-yellow)")
-                    break
-                }
-            }
-            u.Config.Items = mas
+            u.Config.Items = config.toStringMas()
             ui.Render(u.Config)
         }
 	})
