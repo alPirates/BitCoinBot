@@ -1,6 +1,8 @@
 package main
 
 import (
+	"fmt"
+
 	ui "github.com/gizak/termui"
 	"github.com/gizak/termui/extra"
 )
@@ -54,8 +56,6 @@ func NewUiService() UiService {
 	listCommands.Y = 0
 
 	bc := ui.NewBarChart()
-	bc.Data = []int{87, 54, 100, 50, 88}
-	bc.DataLabels = []string{"S1", "S2", "S3", "S4", "S5"}
 	bc.BorderLabel = "Состояние"
 	bc.Width = 26
 	bc.Height = 10
@@ -144,6 +144,8 @@ func (u UiService) Init() {
 		),
 	}
 
+	u.SetCharts([]int{80, 54, 100, 50, 88})
+
 	u.RefreshConfig()
 
 	u.Layout1 = layout1
@@ -187,10 +189,17 @@ func (u UiService) CheckKeys() {
 			u.RefreshConfig()
 		}
 	})
+	ui.Handle("n", func(ui.Event) {
+		if field == 2 {
+			CreateConfig(&u)
+		}
+	})
 	ui.Handle("t", func(ui.Event) {
 		// тестовое  письмо
 		if field == 1 {
-			u.LogError("[Email] [шлю тестовый email](fg-red)")
+			u.LogError("[Email] [шлю тестовый email](fg-green)")
+			sendMessageByEmail("Тестовое письмо")
+			u.LogError("[Email] [Отправлено](fg-green)")
 		}
 	})
 
@@ -219,4 +228,26 @@ func (u UiService) RefreshConfig() {
 	config.getConfig(&u)
 	u.Config.Items = config.toStringMas()
 	ui.Render(u.Config)
+}
+
+func (u UiService) SetStatus(status bool) {
+	if status {
+		u.ConfigStatus.BorderFg = ui.ColorGreen
+		u.ConfigStatus.Text = "[Конфигурация прочитана успешно](fg-green)"
+
+	} else {
+		u.ConfigStatus.BorderFg = ui.ColorRed
+		u.ConfigStatus.Text = "[Ошибка чтения конфигурации. Создайте новую нажав [n]](fg-red)"
+	}
+	ui.Render(u.ConfigStatus)
+}
+
+func (u UiService) SetCharts(data []int) {
+	u.Status.Data = data
+	lables := make([]string, 0)
+	for i, _ := range data {
+		lables = append(lables, fmt.Sprintf("V%d", i+1))
+	}
+	u.Status.DataLabels = lables
+	ui.Render(u.Status)
 }

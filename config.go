@@ -1,6 +1,8 @@
 package main
 
 import (
+	"bytes"
+	"io/ioutil"
 	"reflect"
 	"strconv"
 
@@ -20,7 +22,35 @@ type Config struct {
 func (c *Config) getConfig(ui *UiService) {
 	if _, err := toml.DecodeFile("config.toml", &c); err != nil {
 		ui.LogError("[CONF_ERR](fg-red) [Не удается прочитать файл config.toml](fg-yellow)")
+		ui.SetStatus(false)
+		return
 	}
+	if c.UpdateTime == 0 {
+		c.UpdateTime = 99
+		ui.LogError("[CONF] [Введите верный UpdateTime!](fg-red)")
+		ui.SetStatus(false)
+		return
+	}
+	ui.SetStatus(true)
+}
+
+func CreateConfig(ui *UiService) {
+	ui.LogError("[MSG] Создаю конфигурационный файл")
+	buf := new(bytes.Buffer)
+	cfg := Config{
+		80, "test@test.com", "password", 15, "url1", "url2",
+	}
+	if err := toml.NewEncoder(buf).Encode(cfg); err != nil {
+		ui.LogError(err.Error())
+		return
+	}
+	err := ioutil.WriteFile("config.toml", buf.Bytes(), 0644)
+	if err != nil {
+		ui.LogError("[CONF] [Не удается создать файл config.toml](fg-red)")
+		return
+	}
+	ui.LogError("[MSG] [Конфигурационный файл создан успешно](fg-green)")
+	config.getConfig(ui)
 }
 
 func (config *Config) toStringMas() []string {
