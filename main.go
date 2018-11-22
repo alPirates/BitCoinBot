@@ -1,19 +1,12 @@
 package main
 
-import (
-	"fmt"
-	"time"
+var (
+    config *Config
 )
 
 func main() {
-	sendError("reading config...")
-	config := getConfig()
-	sendError("starting bot...")
-	bot := startBot(config)
-	go parse(bot, config)
-	startBotWork(bot, config)
-}
-
-func sendError(err string) {
-	fmt.Println(time.Now().Format(time.UnixDate) + " : " + err)
+	config = getConfig()
+    ui := NewUiService()
+    go loopParse(&ui, config)
+    ui.Init()
 }

@@ -6,13 +6,18 @@ import (
 	"time"
 
 	"github.com/PuerkitoBio/goquery"
-	tgbot "gopkg.in/telegram-bot-api.v4"
 )
 
-func parse(bot *tgbot.BotAPI, config Config) {
-	for true {
+func loopParse(u *UiService, config *Config) {
+    for true {
+        startTime := time.Now()
+        parse(u, config)
+        time.Sleep(time.Duration(config.UpdateTime)*time.Minute - time.Now().Sub(startTime))
+    }
+}
+
+func parse(u *UiService, config *Config) {
 		messages := []string{}
-		startTime := time.Now()
 
 		doc, err := goquery.NewDocument(config.HTMLURL1)
 		if err == nil {
@@ -49,7 +54,7 @@ func parse(bot *tgbot.BotAPI, config Config) {
 					if text != "" {
 						temperatura, errT := strconv.Atoi(text)
 						if errT != nil {
-							sendError("температура не является числом : " + err.Error())
+							u.LogError("[ERR] [температура не является числом : " + err.Error() + "](fg-red)")
 						} else if temperatura > config.Temperature {
 							messages = append(messages, `температура превышена (`+text+")")
 						}
@@ -58,7 +63,7 @@ func parse(bot *tgbot.BotAPI, config Config) {
 			})
 
 		} else {
-			sendError("can't open your website : " + err.Error())
+            u.LogError("[ERR] [can't open your website : " + err.Error() + "](fg-red)")
 		}
 
 		doc, err = goquery.NewDocument(config.HTMLURL2)
@@ -91,13 +96,12 @@ func parse(bot *tgbot.BotAPI, config Config) {
 			})
 
 		} else {
-			sendError("can't open your website : " + err.Error())
+            u.LogError("[ERR] [can't open your website : " + err.Error() + "](fg-red)")
 		}
 
 		if len(messages) != 0 {
-			go sendMessages(bot, config, messages)
+            for _, message := range messages {
+                go SendMessagesByMail(*config, message)
+            }
 		}
-
-		time.Sleep(time.Duration(config.UpdateTime)*time.Minute - time.Now().Sub(startTime))
-	}
 }
