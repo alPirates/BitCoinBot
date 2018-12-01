@@ -3,11 +3,12 @@ package main
 import "log"
 
 type Notifier interface {
-	Notify(message string) error
+	Notify(ui *UiService, message string) error
 }
 
 type NotifyService struct {
-	Services []Notifier
+	Services  []Notifier
+	UiService *UiService
 }
 
 func NewNotifyService(services ...Notifier) NotifyService {
@@ -18,7 +19,7 @@ func NewNotifyService(services ...Notifier) NotifyService {
 
 func (n NotifyService) Notify(message string) {
 	for _, notifier := range n.Services {
-		err := notifier.Notify(message)
+		err := notifier.Notify(n.UiService, message)
 		if err != nil {
 			// handle error
 			log.Println(err)
