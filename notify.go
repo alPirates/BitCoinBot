@@ -7,8 +7,7 @@ type Notifier interface {
 }
 
 type NotifyService struct {
-	Services  []Notifier
-	UiService *UiService
+	Services []Notifier
 }
 
 func NewNotifyService(services ...Notifier) NotifyService {
@@ -17,9 +16,9 @@ func NewNotifyService(services ...Notifier) NotifyService {
 	}
 }
 
-func (n NotifyService) Notify(message string) {
+func (n NotifyService) Notify(ui *UiService, message string) {
 	for _, notifier := range n.Services {
-		err := notifier.Notify(n.UiService, message)
+		err := notifier.Notify(ui, message)
 		if err != nil {
 			log.Println(err)
 		}

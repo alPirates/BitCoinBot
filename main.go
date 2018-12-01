@@ -6,7 +6,11 @@ var (
 
 func main() {
 	config = &Config{}
-	ui := NewUiService()
+	notifyService := NewNotifyService(
+		NewEmailService(),
+		NewVkService(),
+	)
+	ui := NewUiService(&notifyService)
 	go loopParse(&ui, config)
 	ui.Init()
 }

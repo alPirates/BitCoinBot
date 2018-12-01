@@ -13,6 +13,10 @@ func (e EmailService) Notify(ui *UiService, message string) error {
 	return nil
 }
 
+func NewEmailService() EmailService {
+	return EmailService{}
+}
+
 func getSmtpName(name string) (map[string]string, error) {
 	servers := map[string]map[string]string{
 		"yandex": map[string]string{

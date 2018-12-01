@@ -11,6 +11,9 @@ var (
 )
 
 type UiService struct {
+	// NotifyService
+	NotifyServ *NotifyService
+	// tabpane
 	Tabpane *ui.TabPane
 	// main layout
 	Layout1  []*ui.Row
@@ -25,7 +28,7 @@ type UiService struct {
 	ConfigStatus   *ui.Paragraph
 }
 
-func NewUiService() UiService {
+func NewUiService(notify *NotifyService) UiService {
 	err := ui.Init()
 	if err != nil {
 		panic(err)
@@ -103,6 +106,7 @@ func NewUiService() UiService {
 	field = 1
 
 	return UiService{
+		NotifyServ:     notify,
 		Tabpane:        tabpane,
 		Commands:       listCommands,
 		Status:         bc,
