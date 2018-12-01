@@ -9,6 +9,7 @@ import (
 )
 
 func loopParse(u *UiService, config *Config) {
+    time.Sleep(1*time.Second)
 	for true {
 		startTime := time.Now()
 		parse(u, config)
@@ -19,6 +20,7 @@ func loopParse(u *UiService, config *Config) {
 func parse(u *UiService, config *Config) {
 	messages := []string{}
 	temps := make([]int, 0)
+    u.LogError("[PARSE] [start parsing](fg-green)")
 
 	doc, err := goquery.NewDocument(config.HTMLURL1)
 	if err == nil {
@@ -40,12 +42,7 @@ func parse(u *UiService, config *Config) {
 								messages = append(messages, `поле "oooooooo" изменено`)
 							}
 						}
-						if statuses[len(statuses)-1] != "ooooooo" {
-							messages = append(messages, `поле "oooooooo" изменено`)
-						}
 					}
-					break
-				default:
 					break
 				}
 
@@ -53,10 +50,10 @@ func parse(u *UiService, config *Config) {
 			s1.Find("#cbi-table-1-temp2").Each(func(arg1 int, s2 *goquery.Selection) {
 				text := s2.Text()
 				if text != "" {
-					temperatura, errT := strconv.Atoi(text)
+					temperatura, errT := strconv.Atoi(text[6:])
 					temps = append(temps, temperatura)
 					if errT != nil {
-						u.LogError("[ERR] [температура не является числом : " + err.Error() + "](fg-red)")
+						u.LogError("[ERR] [температура не является числом : " + errT.Error() + "](fg-red)")
 					} else if temperatura > config.Temperature {
 						messages = append(messages, `температура превышена (`+text+")")
 					}
@@ -65,7 +62,7 @@ func parse(u *UiService, config *Config) {
 		})
 
 	} else {
-		u.LogError("[ERR] [can't open your website : " + err.Error() + "](fg-red)")
+		u.LogError("[ERR] [url1 can't open your website : " + err.Error() + "](fg-red)")
 	}
 
 	doc, err = goquery.NewDocument(config.HTMLURL2)
@@ -83,29 +80,43 @@ func parse(u *UiService, config *Config) {
 				case 2:
 					if text != "" {
 						statuses := strings.Split(s2.Text(), " ")
-						for i := 1; i < len(statuses); i++ {
+						for i := 1; i < len(statuses)-1; i++ {
 							if statuses[i] != "oooooooo" {
 								messages = append(messages, `поле "oooooooo" изменено`)
 							}
 						}
+                        if statuses[len(statuses)-1] != "ooooooo" && len(messages) == 0 {
+							messages = append(messages, `поле "oooooooo" изменено`)
+						}
 					}
 					break
-				default:
-					break
 				}
-
 			})
+            s1.Find("#cbi-table-1-temp2").Each(func(arg1 int, s2 *goquery.Selection) {
+                text := s2.Text()
+                if text != "" {
+                    temperatura, errT := strconv.Atoi(text)
+                    temps = append(temps, temperatura)
+                    if errT != nil {
+                        u.LogError("[ERR] [температура не является числом : " + errT.Error() + "](fg-red)")
+                    } else if temperatura > config.Temperature {
+                        messages = append(messages, `температура превышена (`+text+")")
+                    }
+                }
+            })
 		})
 
 	} else {
-		u.LogError("[ERR] [can't open your website : " + err.Error() + "](fg-red)")
+		u.LogError("[ERR] [url2 can't open your website : " + err.Error() + "](fg-red)")
 	}
 
 	u.SetCharts(temps)
 
 	if len(messages) != 0 {
 		for _, message := range messages {
-			go sendMessageByEmail(message)
+			// go sendMessageByEmail(u, message)
+            u.LogError("[ERR] [" + message + "](fg-red)")
 		}
 	}
+
 }

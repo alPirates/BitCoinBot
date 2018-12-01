@@ -11,12 +11,12 @@ import (
 
 // Config structure
 type Config struct {
-	Temperature int    `toml:"Temperature"`
-	Email       string `toml:"Email"`
-	Password    string `toml:"Password"`
-	UpdateTime  int    `toml:"UpdateTime"`
-	HTMLURL1    string `toml:"Url1"`
-	HTMLURL2    string `toml:"Url2"`
+	Temperature int    `toml:"Temperature" conf:"TEMP"`
+	Email       string `toml:"Email" conf:"MAIL"`
+	Password    string `toml:"Password" conf:"PASS"`
+	UpdateTime  int    `toml:"UpdateTime" conf:"TIME"`
+	HTMLURL1    string `toml:"Url1" conf:"URL1"`
+	HTMLURL2    string `toml:"Url2" conf:"URL2"`
 }
 
 func (c *Config) getConfig(ui *UiService) {
@@ -61,10 +61,10 @@ func (config *Config) toStringMas() []string {
 		g := v.Type().Field(i)
 		switch v.Field(i).Kind() {
 		case reflect.String:
-			mas = append(mas, "["+g.Name+"] ["+v.Field(i).String()+"](fg-yellow)")
+			mas = append(mas, "["+g.Tag.Get("conf")+"] ["+v.Field(i).String()+"](fg-yellow)")
 			break
 		case reflect.Int:
-			mas = append(mas, "["+g.Name+"] ["+strconv.Itoa((int)(v.Field(i).Int()))+"](fg-yellow)")
+			mas = append(mas, "["+g.Tag.Get("conf")+"] ["+strconv.Itoa((int)(v.Field(i).Int()))+"](fg-yellow)")
 			break
 		}
 	}

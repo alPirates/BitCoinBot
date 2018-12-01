@@ -74,6 +74,7 @@ func NewUiService() UiService {
 	configCommands := ui.NewList()
 	commandsList := []string{
 		"[r] [Обновить конфигурацию](fg-red)",
+        "[n] [Создать дефолтный файл](fg-red)",
 		"---------------------",
 		"[1] [Главная панель](fg-green)",
 		"[2] [Конфигурация](fg-yellow)",
@@ -198,7 +199,7 @@ func (u UiService) CheckKeys() {
 		// тестовое  письмо
 		if field == 1 {
 			u.LogError("[Email] [шлю тестовый email](fg-green)")
-			sendMessageByEmail("Тестовое письмо")
+			sendMessageByEmail(&u ,"Тестовое письмо")
 			u.LogError("[Email] [Отправлено](fg-green)")
 		}
 	})
