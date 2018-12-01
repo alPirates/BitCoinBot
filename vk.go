@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
 	"io/ioutil"
@@ -37,8 +38,20 @@ func (vk VkService) Notify(ui *UiService, message string) error {
 		return err
 	}
 	if strings.Contains(string(body), "error") {
-		ui.LogError(string(body))       // TODO: error
-		return errors.New(string(body)) // TODO: error
+
+		type Error struct {
+			Error_msg string
+		}
+
+		type Err struct {
+			Error Error
+		}
+
+		e := &Err{}
+		json.Unmarshal(body, e)
+
+		ui.LogError("[VK] " + e.Error.Error_msg)
+		return errors.New("[VK] " + e.Error.Error_msg)
 	}
 	return nil
 }

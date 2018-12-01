@@ -251,7 +251,9 @@ func (u UiService) SetStatus(status bool) {
 
 	} else {
 		u.ConfigStatus.BorderFg = ui.ColorRed
-		u.ConfigStatus.Text = "[Ошибка чтения конфигурации. Создайте новую нажав [n]](fg-red)"
+		u.ConfigStatus.Text = "[Ошибка чтения конфигурации. Создана новая](fg-red)"
+		CreateConfig(&u)
+		config.getConfig(&u)
 	}
 	ui.Render(u.ConfigStatus)
 }
