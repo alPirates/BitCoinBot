@@ -39,9 +39,9 @@ func getSmtpName(name string) (map[string]string, error) {
 		if r != nil {
 			return r, nil
 		}
-		return nil, errors.New("Cant find smtp server in list")
+		return nil, errors.New("Не могу найти smtp сервер в списке")
 	}
-	return nil, errors.New("Cant find email addres regexp in string")
+	return nil, errors.New("Не могу найти адрес почты, используя regexp")
 }
 
 func sendMessageByEmail(ui *UiService, message string) {
@@ -50,7 +50,7 @@ func sendMessageByEmail(ui *UiService, message string) {
 	serverSMTP, err := getSmtpName(email)
 
 	if err != nil {
-		ui.LogError("[SMTP] [use ...@yandex.ru](fg-red)")
+		ui.LogError("[SMTP] [Используйте ...@yandex.ru](fg-red)")
 		return
 	}
 
@@ -64,7 +64,7 @@ func sendMessageByEmail(ui *UiService, message string) {
 	)
 	err = smtp.SendMail(serverSMTP["port"], auth, email, to, msg)
 	if err != nil {
-		ui.LogError("[SMTP] [incorrect email and password](fg-red)")
+		ui.LogError("[SMTP] [неверная почта или пароль](fg-red)")
 	}
 
 }

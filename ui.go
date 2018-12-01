@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"os"
 
 	ui "github.com/gizak/termui"
 )
@@ -94,7 +95,7 @@ func NewUiService(notify *NotifyService) UiService {
 	configList.Items = configListList
 	configList.ItemFgColor = ui.ColorCyan
 	configList.BorderLabel = "Конфигурация"
-	configList.Height = 10
+	configList.Height = 11
 	configList.Width = 25
 	configList.Y = 0
 
@@ -114,9 +115,7 @@ func NewUiService(notify *NotifyService) UiService {
 		ConfigCommands: configCommands,
 		Config:         configList,
 		ConfigStatus:   configStatus,
-		logs: []string{
-			"[TMP] [FIRE! FIRE!](fg-red)",
-		},
+		logs:           []string{},
 	}
 }
 
@@ -166,6 +165,7 @@ func (u UiService) Init() {
 			// press 'q' or 'C-c' to quit
 			case "q", "<C-c>":
 				ui.Close()
+				os.Exit(0)
 				// quit
 			case "u":
 				// обновление состояния

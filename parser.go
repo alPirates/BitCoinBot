@@ -20,7 +20,7 @@ func loopParse(u *UiService, config *Config) {
 func parse(u *UiService, config *Config) {
 	messages := []string{}
 	temps := make([]int, 0)
-	u.LogError("[PARSE] [start parsing](fg-green)")
+	u.LogError("[PARSE] [начинаю парсить](fg-green)")
 
 	doc, err := goquery.NewDocument(config.HTMLURL1)
 	if err == nil {
@@ -50,7 +50,8 @@ func parse(u *UiService, config *Config) {
 			s1.Find("#cbi-table-1-temp2").Each(func(arg1 int, s2 *goquery.Selection) {
 				text := s2.Text()
 				if text != "" {
-					temperatura, errT := strconv.Atoi(text[6:])
+					text = text[6:]
+					temperatura, errT := strconv.Atoi(text)
 					temps = append(temps, temperatura)
 					if errT != nil {
 						u.LogError("[ERR] [температура не является числом : " + errT.Error() + "](fg-red)")
@@ -62,7 +63,7 @@ func parse(u *UiService, config *Config) {
 		})
 
 	} else {
-		u.LogError("[ERR] [url1 can't open your website : " + err.Error() + "](fg-red)")
+		u.LogError("[ERR] [не удалось открыть url1 : " + err.Error() + "](fg-red)")
 	}
 
 	doc, err = goquery.NewDocument(config.HTMLURL2)
@@ -107,7 +108,7 @@ func parse(u *UiService, config *Config) {
 		})
 
 	} else {
-		u.LogError("[ERR] [url2 can't open your website : " + err.Error() + "](fg-red)")
+		u.LogError("[ERR] [не удалось открыть url2 : " + err.Error() + "](fg-red)")
 	}
 
 	u.SetCharts(temps)
