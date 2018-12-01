@@ -6,6 +6,13 @@ import (
 	"regexp"
 )
 
+type EmailService struct{}
+
+func (e EmailService) Notify(ui *UiService, message string) error {
+	sendMessageByEmail(ui, message)
+	return nil
+}
+
 func getSmtpName(name string) (map[string]string, error) {
 	servers := map[string]map[string]string{
 		"yandex": map[string]string{

@@ -4,7 +4,6 @@ import (
 	"fmt"
 
 	ui "github.com/gizak/termui"
-	"github.com/gizak/termui/extra"
 )
 
 var (
@@ -12,7 +11,7 @@ var (
 )
 
 type UiService struct {
-	Tabpane *extra.Tabpane
+	Tabpane *ui.TabPane
 	// main layout
 	Layout1  []*ui.Row
 	Commands *ui.List
@@ -23,7 +22,7 @@ type UiService struct {
 	Layout2        []*ui.Row
 	ConfigCommands *ui.List
 	Config         *ui.List
-	ConfigStatus   *ui.Par
+	ConfigStatus   *ui.Paragraph
 }
 
 func NewUiService() UiService {
@@ -32,9 +31,9 @@ func NewUiService() UiService {
 		panic(err)
 	}
 
-	tab1 := extra.NewTab("Статистика")
-	tab2 := extra.NewTab("Конфигурация")
-	tabpane := extra.NewTabpane()
+	tab1 := ui.NewTab("Статистика")
+	tab2 := ui.NewTab("Конфигурация")
+	tabpane := ui.NewTabPane()
 	tabpane.Y = 1
 	tabpane.Width = 20
 	tabpane.SetTabs(*tab1, *tab2)
@@ -74,7 +73,7 @@ func NewUiService() UiService {
 	configCommands := ui.NewList()
 	commandsList := []string{
 		"[r] [Обновить конфигурацию](fg-red)",
-        "[n] [Создать дефолтный файл](fg-red)",
+		"[n] [Создать дефолтный файл](fg-red)",
 		"---------------------",
 		"[1] [Главная панель](fg-green)",
 		"[2] [Конфигурация](fg-yellow)",
@@ -95,7 +94,7 @@ func NewUiService() UiService {
 	configList.Width = 25
 	configList.Y = 0
 
-	configStatus := ui.NewPar("[Конфигурация прочитана успешно](fg-green)")
+	configStatus := ui.NewParagraph("[Конфигурация прочитана успешно](fg-green)")
 	configStatus.Height = 3
 	configStatus.Width = 37
 	configStatus.Y = 4
@@ -154,9 +153,50 @@ func (u UiService) Init() {
 
 	u.SetMainLayout()
 
-	// checking keys
-	u.CheckKeys()
-	ui.Loop()
+	uiEvents := ui.PollEvents()
+	for {
+		select {
+		case e := <-uiEvents:
+			switch e.ID {
+			// press 'q' or 'C-c' to quit
+			case "q", "<C-c>":
+				ui.Close()
+				// quit
+			case "u":
+				// обновление состояния
+				if field == 1 {
+					parse(&u, config)
+				}
+			case "r":
+				if field == 2 {
+					u.RefreshConfig()
+				}
+			case "n":
+				if field == 2 {
+					CreateConfig(&u)
+				}
+			case "t":
+				// тестовое  письмо
+				if field == 1 {
+					u.LogError("[Email] [шлю тестовый email](fg-green)")
+					sendMessageByEmail(&u, "Тестовое письмо")
+					u.LogError("[Email] [Отправлено](fg-green)")
+				}
+			case "1":
+				u.SetMainLayout()
+				field = 1
+			case "2":
+				u.SetConfigLayout()
+				field = 2
+			case "<Resize>":
+				payload := e.Payload.(ui.Resize)
+				width := payload.Width
+				ui.Body.Width = width
+				ui.Body.Align()
+				ui.Render(ui.Body)
+			}
+		}
+	}
 }
 
 func (u UiService) SetMainLayout() {
@@ -173,46 +213,6 @@ func (u UiService) SetConfigLayout() {
 	ui.Body.Align()
 	u.Tabpane.SetActiveRight()
 	ui.Render(ui.Body, u.Tabpane)
-}
-
-func (u UiService) CheckKeys() {
-	ui.Handle("q", func(ui.Event) {
-		ui.StopLoop()
-	})
-	ui.Handle("u", func(ui.Event) {
-		// обновление состояния
-		if field == 1 {
-			parse(&u, config)
-		}
-	})
-	ui.Handle("r", func(ui.Event) {
-		if field == 2 {
-			u.RefreshConfig()
-		}
-	})
-	ui.Handle("n", func(ui.Event) {
-		if field == 2 {
-			CreateConfig(&u)
-		}
-	})
-	ui.Handle("t", func(ui.Event) {
-		// тестовое  письмо
-		if field == 1 {
-			u.LogError("[Email] [шлю тестовый email](fg-green)")
-			sendMessageByEmail(&u ,"Тестовое письмо")
-			u.LogError("[Email] [Отправлено](fg-green)")
-		}
-	})
-
-	// switch layout
-	ui.Handle("1", func(ui.Event) {
-		u.SetMainLayout()
-		field = 1
-	})
-	ui.Handle("2", func(ui.Event) {
-		u.SetConfigLayout()
-		field = 2
-	})
 }
 
 func (u UiService) LogError(message string) {
