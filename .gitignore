@@ -1,5 +1,6 @@
 BitCoinBot
 bin
+config.toml
 build
 build.exe
 *.zip

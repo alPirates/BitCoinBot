@@ -43,6 +43,7 @@ func NewUiService() UiService {
 		"[q] [Выход](fg-red)",
 		"[u] [Обновление состояния](fg-blue)",
 		"[t] [Тестовое письмо](fg-red)",
+		"[v] [Тестовое сообщение vk](fg-red)",
 		"---------------------",
 		"[1] [Главная панель](fg-green)",
 		"[2] [Конфигурация](fg-yellow)",
@@ -181,6 +182,14 @@ func (u UiService) Init() {
 					u.LogError("[Email] [шлю тестовый email](fg-green)")
 					sendMessageByEmail(&u, "Тестовое письмо")
 					u.LogError("[Email] [Отправлено](fg-green)")
+				}
+			case "v":
+				// тестовое  письмо
+				if field == 1 {
+					vk := NewVkService()
+					u.LogError("[VK] [шлю тестовое сообщение vk](fg-green)")
+					vk.Notify(&u, "Тестовое письмо")
+					u.LogError("[VK] [Отправлено](fg-green)")
 				}
 			case "1":
 				u.SetMainLayout()

@@ -15,6 +15,9 @@ type Config struct {
 	Email       string `toml:"Email" conf:"MAIL"`
 	Password    string `toml:"Password" conf:"PASS"`
 	UpdateTime  int    `toml:"UpdateTime" conf:"TIME"`
+	Token       string `toml:"Token" conf:"TOKN"`
+	GroupId     int    `toml:"GroupId" conf:"GID"`
+	UserId      int    `toml:"UserId" conf:"UID"`
 	HTMLURL1    string `toml:"Url1" conf:"URL1"`
 	HTMLURL2    string `toml:"Url2" conf:"URL2"`
 }
@@ -38,7 +41,7 @@ func CreateConfig(ui *UiService) {
 	ui.LogError("[MSG] Создаю конфигурационный файл")
 	buf := new(bytes.Buffer)
 	cfg := Config{
-		80, "test@test.com", "password", 15, "url1", "url2",
+		80, "test@test.com", "password", 15, "vk_token", 0, 0, "url1", "url2",
 	}
 	if err := toml.NewEncoder(buf).Encode(cfg); err != nil {
 		ui.LogError(err.Error())
